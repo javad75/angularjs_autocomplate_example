@@ -1,0 +1,80 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="angular.min.js"></script>
+        <style>
+            ul{
+                background-color: #c7c7c7;
+                width: 154px;
+                height: 100px;
+                position: absolute;
+                z-index: 100;
+            }
+            ul li p:hover{
+               color: #ff4006;
+            }
+            ul{
+                margin: 0;
+                padding: 0;
+            }
+            ul li p{
+                margin: 0;
+            }
+        </style>
+    </head>
+    <body ng-app="myapp" ng-controller="myctrl">
+        <input type="text" name="carname" ng-focus="infocus=true" ng-blur="infocusout()" ng-model="input" ng-change="search()">
+        <ul ng-show="showresult">
+            <li ng-repeat="name in result">
+                <p ng-click="selected(name)">{{ name }}</p>
+            </li>
+        </ul>
+        <div class="small"></div>
+    </body>
+    <script>
+        var app = angular.module('myapp', []);
+        app.controller('myctrl', function($scope){
+            $scope.search = function(){
+                var namearray = ['mohsean', 'javad', 'mohammad javad', 'javad feshat'];    
+                function objeach(myobj, search){
+                    result = new Array();
+                    myobj.sort(function(a,b){
+                        return b.length < a.length;
+                    });
+                    for (var val in myobj){
+                        if (typeof(myobj[val]) == 'object'){
+                            objeach(myobj[val], search);
+                        }else{
+                            var str = myobj[val];
+                            var index = str.search(search);
+                            if (index != -1){
+                                // if found
+                                result.push(str);
+                            }
+                        }
+                    }
+                    return result;
+                }
+                if($scope.input.length >= 2 && $scope.infocus){
+                    var find = new RegExp($scope.input, "igm");
+                    $scope.result = objeach(namearray, find);
+                    if ($scope.result.length >= 1){
+                        $scope.showresult = true;
+                    }
+                }else{
+                    $scope.result = [];
+                    $scope.showresult = false;
+                }
+            }
+            $scope.selected = function(select){
+                $scope.input = select;
+                $scope.result = [];
+                $scope.showresult = false;
+            }
+            $scope.infocusout = function(){
+                //$scope.result = [];
+                //$scope.showresult = false;
+            }
+        });
+    </script>
+</html>
